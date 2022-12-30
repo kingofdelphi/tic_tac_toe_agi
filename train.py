@@ -12,8 +12,6 @@ class Pi(nn.Module):
                 nn.Linear(in_dim, 64),
                 nn.ReLU(),
                 nn.Linear(64, out_dim),
-                #nn.ReLU(),
-                #nn.Softmax(),
         ]
         self.model = nn.Sequential(*layers)
         self.onpolicy_reset()
@@ -107,7 +105,7 @@ def main(episodes=40000):
                 last_100.count('D'),
                 'LOST_100',
                 last_100.count('L'),
-                'WTF',
+                'INVAL_100',
                 last_100.count('-'),
                 )
             print(
@@ -117,7 +115,7 @@ def main(episodes=40000):
                 last_500.count('D'),
                 'LOST_500',
                 last_500.count('L'),
-                'WTF',
+                'INVAL_100',
                 last_500.count('-'),
                 )
             print(f'Episode {epi}, loss: {loss}, total reward: {total_reward}')
