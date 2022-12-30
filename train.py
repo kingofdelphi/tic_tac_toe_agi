@@ -4,7 +4,7 @@ from torch.distributions.categorical import Categorical
 import numpy as np
 import gym
 
-from cenv import TicTacEnv 
+from tic_tac_environment import TicTacEnv 
 
 class Pi(nn.Module):
     def __init__(self, in_dim, out_dim):
@@ -30,11 +30,7 @@ class Pi(nn.Module):
 
     def act(self, state):
         x = torch.from_numpy(state.astype(np.float32))
-        pdparam = self.forward(x) # (1, num_action), each number represent the raw logits for that specific action
-        # model contain the paremeters theta of the policy, pd is the probability 
-        # distribution parameterized by model's theta 
-        #pdparam = pdparam*(x == 0)
-        #print(pdparam)
+        pdparam = self.forward(x)
         pd = Categorical(logits=pdparam*(x==0))
         action = pd.sample()
         log_prob = pd.log_prob(action)
@@ -43,9 +39,9 @@ class Pi(nn.Module):
 
     def best_action(self, state):
         x = torch.from_numpy(state.astype(np.float32))
-        pdparam = self.forward(x) # (1, num_action), each number represent the raw logits for that specific action
-        # model contain the paremeters theta of the policy, pd is the probability 
-        # distribution parameterized by model's theta 
+        pdparam = self.forward(x)
+
+        # logic to IGNORE invalid moves. Moves using occupied cells are forbidden
         choices = []
         vals = []
         for i in range(9):
@@ -74,7 +70,7 @@ def train(pi, optimizer):
     optimizer.step()
     return loss
 
-def main(episodes=20000):
+def main(episodes=40000):
     env = TicTacEnv()
     #env._max_episode_steps=500
     # in_dim is the state dimension

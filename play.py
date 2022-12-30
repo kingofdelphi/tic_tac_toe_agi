@@ -1,5 +1,5 @@
 from common import pretty_print_board, make_move_1d, EMPTY_CELL, Player, make_move_1d, opponent, resolve_game_state, GameState
-import cenv
+import tic_tac_environment
 import numpy as np
 
 def play(model):
@@ -18,9 +18,8 @@ def play(model):
             while move == None:
                 try:
                     print("Your move:")
-                    move = cenv.adversary_move(board, turn) + 1
-                    #move = int(input())
-                    move -= 1
+                    #move = tic_tac_environment.adversary_move(board, turn)
+                    move = int(input()) - 1 
                     if board[move] != EMPTY_CELL:
                         print("Invalid move, select empty position")
                         move = None
