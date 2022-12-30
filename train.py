@@ -74,7 +74,7 @@ def train(pi, optimizer):
     optimizer.step()
     return loss
 
-def main():
+def main(episodes=20000):
     env = TicTacEnv()
     #env._max_episode_steps=500
     # in_dim is the state dimension
@@ -85,7 +85,7 @@ def main():
     
     optimizer = optim.Adam(pi.parameters(), lr = 0.005)
     games = []
-    for epi in range(1000):
+    for epi in range(episodes):
         state = env.reset()
         while True:
             action = pi.act(state)
