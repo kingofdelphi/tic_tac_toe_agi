@@ -2,7 +2,6 @@ import torch
 from torch import nn, optim
 from torch.distributions.categorical import Categorical
 import numpy as np
-import gym
 
 from tic_tac_environment import TicTacEnv 
 
@@ -54,16 +53,16 @@ class Pi(nn.Module):
 
 def train(pi, optimizer):
     T = len(pi.rewards)
-    rets = np.empty(T, dtype = np.float32)
+    rets = np.empty(T, dtype=np.float32)
     future_ret = 0.0
     gamma = 0.99
     for t in reversed(range(T)):
-        future_ret = pi.rewards[t] + gamma*future_ret
+        future_ret = pi.rewards[t] + gamma * future_ret
         rets[t] = future_ret
 
     rets = torch.tensor(rets)
     log_probs = torch.stack(pi.log_probs)
-    loss = -log_probs*rets
+    loss = -log_probs * rets
     loss = torch.sum(loss)
     optimizer.zero_grad()
     loss.backward()
@@ -72,26 +71,24 @@ def train(pi, optimizer):
 
 def main(episodes=40000):
     env = TicTacEnv()
-    #env._max_episode_steps=500
+
     # in_dim is the state dimension
     in_dim = env.observation_space.shape[0]
-    # out_dim is the action dimension
+
+    # out_dim is the action dimension, we have max 9 possible moves
     out_dim = env.action_space.n
     pi = Pi(in_dim, out_dim)
     
-    optimizer = optim.Adam(pi.parameters(), lr = 0.005)
-    games = []
+    optimizer = optim.Adam(pi.parameters(), lr=0.005)
+    games = [] # this will store how a game in the episode `epi` ended, win, lose, or draw
     for epi in range(episodes):
         state = env.reset()
         while True:
             action = pi.act(state)
-            assert 0 <= action < 9
             state, reward, done, tag = env.step(action)
-            #print(state,done,reward)
-            #input()
             pi.rewards.append(reward)
             if done:
-                games.append(tag)
+                games.append(tag) #
                 break
 
         loss = train(pi, optimizer)
