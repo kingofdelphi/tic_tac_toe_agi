@@ -3,7 +3,12 @@ import numpy as np
 
 
 class NotSoSmartAdversary():
-    def get_action(self, state, turn):
+    def __init__(self, id, name='NotSoSmart'):
+        self.id = id
+        self.name = name
+
+    def get_action(self, state):
+        turn = self.id
         candidate_moves = empty_positions(state)
         win_action = None
         draw_action = None

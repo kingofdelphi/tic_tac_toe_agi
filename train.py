@@ -34,21 +34,6 @@ class Pi(nn.Module):
         self.log_probs.append(log_prob)
         return action.item()
 
-    def best_action(self, state):
-        x = torch.from_numpy(state.astype(np.float32))
-        pdparam = self.forward(x)
-
-        # logic to IGNORE invalid moves. Moves using occupied cells are forbidden
-        choices = []
-        vals = []
-        for i in range(9):
-            if state[i] == 0:
-                choices.append(i)
-                vals.append(pdparam[i])
-
-        action = np.argmax(np.array(vals))
-        return choices[action]
-
 def train(pi, optimizer):
     T = len(pi.rewards)
     rets = np.empty(T, dtype=np.float32)
@@ -121,9 +106,6 @@ def main(episodes=40000):
             print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
-
-model = main()
-from play import play
-while True:
-    play(model)
-    input('Pause...')
+if __name__ == '__main__':
+    model = main()
+    torch.save(model.state_dict(), './adversaries/trained_adversary/models/v2.pt')

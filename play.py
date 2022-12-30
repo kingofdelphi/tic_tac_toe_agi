@@ -1,34 +1,35 @@
 from adversaries.human import HumanAdversary
+from adversaries.trained_adversary.main import TrainedAdversaryV1
 from common import empty_board, is_cell_occupied, pretty_print_board, EMPTY_CELL, Player, make_move, opponent, resolve_game_state, GameState
 import numpy as np
 
-def play(model):
+def play():
     board = empty_board()
 
-    AI = Player.P1
-    turn = Player.P1
+    ai = TrainedAdversaryV1(Player.P1, 'AI')
+    human = HumanAdversary(Player.P2, 'Human')
+
+    turn = ai
+    p1, p2 = ai, human
+
     status = GameState.NoFinishedYet
-    human = HumanAdversary()
 
     while status == GameState.NoFinishedYet:
-        pretty_print_board(board,turn)
-        move = None
-        if turn == AI:
-            move = model.best_action(np.array(board))
-            print('AI made a move in position', move)
-        else:
-            move = human.get_action(board, turn)
-            print('Human made a move in position', move)
+        turn_id = p1.id
+        pretty_print_board(board, turn_id)
+        move = p1.get_action(board)
+        print(f'{p1.name} made a move in position', move)
 
         occupied =  is_cell_occupied(board, move)
-        board = make_move(board, move, turn)
+        board = make_move(board, move, turn_id)
 
         if occupied:
-            status = GameState.Player1Win if turn == Player.P2 else GameState.Player2Win
+            status = GameState.Player1Win if turn_id == Player.P2 else GameState.Player2Win
         else:
             status = resolve_game_state(board)
 
-        turn = opponent(turn)
+        # swap turns
+        p1, p2 = p2, p1
 
     pretty_print_board(board,turn)
 
@@ -36,7 +37,11 @@ def play(model):
 
     if status == GameState.Draw:
         print(f'It is a draw')
-    elif winner == AI:
+    elif winner == ai.id:
         print(f'AI wins')
     else:
-        print('You win')
+        print('HUman wins')
+
+
+if __name__ == '__main__':
+    play()

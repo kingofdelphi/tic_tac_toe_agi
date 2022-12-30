@@ -30,7 +30,8 @@ class TicTacEnv(Env):
         # amount of distance travelled 
         self.action_space = Discrete(9)
 
-        self.adversary = NotSoSmartAdversary()
+        self.me_player_id = Player.P1
+        self.adversary = NotSoSmartAdversary(Player.P2)
         
         # current state 
         self.reset()
@@ -46,11 +47,8 @@ class TicTacEnv(Env):
         lost = False
         draw = False
 
-        p1 = Player.P1
-        opponent = Player.P2
-
         invalid_move = self.state[action] != EMPTY_CELL
-        self.state = make_move(self.state, action, p1)
+        self.state = make_move(self.state, action, self.me_player_id)
 
         if invalid_move: # already used cell
             lost = True
@@ -58,9 +56,9 @@ class TicTacEnv(Env):
             gamestate = resolve_game_state(self.state)
 
             if gamestate == GameState.NoFinishedYet:
-                counter_action = self.adversary.get_action(self.state, opponent)
+                counter_action = self.adversary.get_action(self.state)
                 assert self.state[counter_action] == EMPTY_CELL
-                self.state = make_move(self.state, counter_action, opponent)
+                self.state = make_move(self.state, counter_action, self.adversary.id)
 
                 gamestate = resolve_game_state(self.state)
 

@@ -2,7 +2,11 @@ from common import EMPTY_CELL
 
 # Just takes action from input and returns it
 class HumanAdversary():
-    def get_action(self, state, turn):
+    def __init__(self, id, name='Human'):
+        self.id = id
+        self.name = name
+
+    def get_action(self, state):
         while True:
             try:
                 print("Your move, cell indexed 1-9]:")
