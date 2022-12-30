@@ -7,12 +7,20 @@ import numpy as np
 from common import Player, GameState, EMPTY_CELL, empty_board, make_move
 from common import resolve_game_state
 
+class GameTag:
+    WON = 'W'
+    LOST = 'L'
+    DRAW = 'D'
+    LOST_BY_INVALID_MOVE = '-'
+    GAME_RUNNING = ' '
+
 # NEVER set zero scores as they're useless in the calculation, 0 signifies no information
-SCORE_MAP = {
-    '-': -10,
-    'W': 10,
-    'L': -5,
-    'D': 5
+REWARD_MAP = {
+    GameTag.LOST_BY_INVALID_MOVE: -10,
+    GameTag.WON: 10,
+    GameTag.LOST: -5,
+    GameTag.DRAW: 5,
+    GameTag.GAME_RUNNING: 0
 }
 
 class TicTacEnv(Env):
@@ -63,18 +71,18 @@ class TicTacEnv(Env):
             elif gamestate == GameState.Draw:
                 draw = True
 
-        tag = ''
+        game_status_tag = GameTag.GAME_RUNNING
 
         if invalid_move:
-            tag='-'
+            game_status_tag = GameTag.LOST_BY_INVALID_MOVE
         elif won:
-            tag='W'
+            game_status_tag = GameTag.WON
         elif lost:
-            tag='L'
+            game_status_tag = GameTag.LOST
         elif draw:
-            tag='D'
+            game_status_tag = GameTag.DRAW
             
-        reward = SCORE_MAP.get(tag, 0)
+        reward = REWARD_MAP[game_status_tag]
         done = won or lost or draw
 
-        return self.state, reward, done, tag
+        return self.state, reward, done, game_status_tag

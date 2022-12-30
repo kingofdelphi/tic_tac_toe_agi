@@ -79,14 +79,14 @@ def main(episodes=40000):
     
     optimizer = optim.Adam(pi.parameters(), lr=0.005)
     games = [] # this will store how a game in the episode `epi` ended, win, lose, or draw
-    for epi in range(episodes):
+    for episode in range(episodes):
         state = env.reset()
         while True:
             action = pi.act(state)
-            state, reward, done, tag = env.step(action)
+            state, reward, done, game_status_tag = env.step(action)
             pi.rewards.append(reward)
             if done:
-                games.append(tag) #
+                games.append(game_status_tag) #
                 break
 
         loss = train(pi, optimizer)
@@ -94,7 +94,7 @@ def main(episodes=40000):
 
         pi.onpolicy_reset()
 
-        if epi % 100 == 0:
+        if episode % 100 == 0:
             last_500 = ''.join(games[-500:])
             last_100 = ''.join(games[-100:])
             print('\n',''.join(games[-100:]))
@@ -118,7 +118,7 @@ def main(episodes=40000):
                 'INVAL_100',
                 last_500.count('-'),
                 )
-            print(f'Episode {epi}, loss: {loss}, total reward: {total_reward}')
+            print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
 

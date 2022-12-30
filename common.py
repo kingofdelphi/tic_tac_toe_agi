@@ -75,3 +75,7 @@ def make_move(board, position, turn):
     result = np.copy(board)
     result[position] = turn
     return result
+
+
+def is_cell_occupied(board, position):
+    return board[position] != EMPTY_CELL
