@@ -9,6 +9,10 @@ class Pi(nn.Module):
         layers = [
                 nn.Linear(in_dim, 64),
                 nn.ReLU(),
+                nn.Linear(64, 64),
+                nn.ReLU(),
+                nn.Linear(64, 64),
+                nn.ReLU(),
                 nn.Linear(64, out_dim),
 
         ]

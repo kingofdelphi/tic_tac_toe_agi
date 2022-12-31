@@ -49,7 +49,7 @@ class TicTacEnv(Env):
             self.adversary = self.a2
         if np.random.rand() < 0.5:
             # simulate opponent starts first randomly
-            self.state[np.random.randint(0, 9)] = self.adversary.id
+            self.state = make_move(self.state, self.adversary.get_action(self.state), self.adversary.id)
         return self.state
 
 
