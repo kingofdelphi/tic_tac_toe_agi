@@ -1,14 +1,12 @@
 from common import Player, empty_board, empty_positions, resolve_game_state, GameState
-from collections import defaultdict
 import numpy as np
-from functools import lru_cache
 
 # Just takes action from input and returns it
 class MinMaxAdversary():
     def __init__(self, id, name='MinMaxAdversary'):
         self.id = id
         self.name = name
-        self.dp = defaultdict(lambda: None)
+        self.dp = [None]*60000
         self.build(empty_board(), Player.P1)
         self.build(empty_board(), Player.P2)
         self.cache = [None]*60000

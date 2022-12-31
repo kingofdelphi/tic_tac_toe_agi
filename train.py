@@ -60,7 +60,7 @@ def main(episodes=10000,learning_rate=0.005):
             last_100 = ''.join(games[-100:])
             print('\n',''.join(games[-100:]))
             print(
-                'LAST 100 GAMES:'
+                'LAST 100 GAMES:',
                 'WINS',
                 last_100.count('W'),
                 'DRAW',
