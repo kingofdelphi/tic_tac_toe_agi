@@ -3,7 +3,6 @@ from adversaries.not_so_smart_adversary import NotSoSmartAdversary
 from adversaries.trained_adversary.main import TrainedAdversaryV1
 from adversaries.trained_adversary.min_max import MinMaxAdversary
 from common import empty_board, pretty_print_board, Player, make_move, resolve_game_state, GameState
-import numpy as np
 
 def min_max_vs_human():
     p1 = MinMaxAdversary(Player.P2, 'AIMinMax')
@@ -12,14 +11,12 @@ def min_max_vs_human():
     return p1, p2
 
 def trained_ai_vs_min_max():
-
     p1 = TrainedAdversaryV1(Player.P1, 'AIv1 I')
     p2 = MinMaxAdversary(Player.P2, 'AIMinMax')
 
     return p1, p2
 
 def trained_ai_vs_human():
-
     p1 = TrainedAdversaryV1(Player.P1, 'AIv1 I')
     p2 = HumanAdversary(Player.P2, 'Human')
 

@@ -50,7 +50,7 @@ def resolve_game_state(board):
     if winner:
         return GameState.Player1Win if winner == Player.P1 else GameState.Player2Win
 
-    return GameState.NoFinishedYet if any(i == EMPTY_CELL for i in board) else GameState.Draw
+    return GameState.NoFinishedYet if EMPTY_CELL in board else GameState.Draw
 
 def empty_board():
     return np.array([0]*9)
