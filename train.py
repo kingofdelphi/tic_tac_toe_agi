@@ -52,6 +52,7 @@ def main(episodes=10000,learning_rate=0.005):
         total_reward = sum(pi.rewards)
 
         pi.onpolicy_reset()
+
         if len(games) > 500:
             games = games[-500:]
         if episode % 1000 == 0:
@@ -59,24 +60,26 @@ def main(episodes=10000,learning_rate=0.005):
             last_100 = ''.join(games[-100:])
             print('\n',''.join(games[-100:]))
             print(
-                'WIN_100',
+                'LAST 100 GAMES:'
+                'WINS',
                 last_100.count('W'),
-                'DRAW_100',
+                'DRAW',
                 last_100.count('D'),
-                'LOST_100',
+                'LOST',
                 last_100.count('L'),
                 )
             print(
-                'WIN_500',
+                'LAST 500 GAMES:',
+                'WINS',
                 last_500.count('W'),
-                'DRAW_500',
+                'DRAWS',
                 last_500.count('D'),
-                'LOST_500',
+                'LOSTS',
                 last_500.count('L'),
                 )
             print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
 if __name__ == '__main__':
-    model = main(episodes=50000, learning_rate=0.005)
+    model = main(episodes=200000, learning_rate=0.005)
     torch.save(model.state_dict(), './adversaries/trained_adversary/models/v1.pt')
