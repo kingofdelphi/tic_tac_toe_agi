@@ -1,38 +1,10 @@
 import torch
 from torch import nn, optim
-from torch.distributions.categorical import Categorical
 import numpy as np
 
+from adversaries.trained_adversary.pi import Pi
+
 from tic_tac_environment import TicTacEnv 
-
-class Pi(nn.Module):
-    def __init__(self, in_dim, out_dim):
-        super(Pi, self).__init__()
-        layers = [
-                nn.Linear(in_dim, 64),
-                nn.ReLU(),
-                nn.Linear(64, out_dim),
-        ]
-        self.model = nn.Sequential(*layers)
-        self.onpolicy_reset()
-        self.train()
-
-    def onpolicy_reset(self):
-        self.log_probs = []
-        self.rewards = []
-
-    def forward(self, x):
-        pdparam = self.model(x)
-        return pdparam
-
-    def act(self, state):
-        x = torch.from_numpy(state.astype(np.float32))
-        pdparam = self.forward(x)
-        pd = Categorical(logits=pdparam*(x==0))
-        action = pd.sample()
-        log_prob = pd.log_prob(action)
-        self.log_probs.append(log_prob)
-        return action.item()
 
 def train(pi, optimizer):
     T = len(pi.rewards)
@@ -52,7 +24,7 @@ def train(pi, optimizer):
     optimizer.step()
     return loss
 
-def main(episodes=40000):
+def main(episodes=100000):
     env = TicTacEnv()
 
     # in_dim is the state dimension
@@ -61,9 +33,11 @@ def main(episodes=40000):
     # out_dim is the action dimension, we have max 9 possible moves
     out_dim = env.action_space.n
     pi = Pi(in_dim, out_dim)
+    pi.train()
     
-    optimizer = optim.Adam(pi.parameters(), lr=0.005)
+    optimizer = optim.Adam(pi.parameters(), lr=0.0001)
     games = [] # this will store how a game in the episode `epi` ended, win, lose, or draw
+    # episodes=10
     for episode in range(episodes):
         state = env.reset()
         while True:
@@ -79,7 +53,7 @@ def main(episodes=40000):
 
         pi.onpolicy_reset()
 
-        if episode % 100 == 0:
+        if episode % 1000 == 0:
             last_500 = ''.join(games[-500:])
             last_100 = ''.join(games[-100:])
             print('\n',''.join(games[-100:]))
@@ -108,4 +82,4 @@ def main(episodes=40000):
 
 if __name__ == '__main__':
     model = main()
-    torch.save(model.state_dict(), './adversaries/trained_adversary/models/v2.pt')
+    torch.save(model.state_dict(), './adversaries/trained_adversary/models/v1.pt')

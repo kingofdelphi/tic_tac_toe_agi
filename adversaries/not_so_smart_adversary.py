@@ -1,4 +1,4 @@
-from common import GameState, empty_positions, opponent, resolve_game_state
+from common import EMPTY_CELL, GameState, empty_positions, opponent, resolve_game_state
 import numpy as np
 
 
@@ -7,28 +7,26 @@ class NotSoSmartAdversary():
         self.id = id
         self.name = name
 
-    def get_action(self, state):
+    def _get_action(self, state):
         turn = self.id
         candidate_moves = empty_positions(state)
-        win_action = None
-        draw_action = None
+        win_action = []
+        draw_action = []
 
         for position in candidate_moves:
             state[position] = turn
             endstate = resolve_game_state(state)
             state[position] = 0
             if endstate == GameState.Draw:
-                draw_action = position
+                draw_action.append(position)
             elif endstate in [GameState.Player1Win, GameState.Player2Win]: #adversary must have won, NOTE: only one player in the list can win
-                win_action = position
+                win_action.append(position)
 
-        action = None
+        if win_action:
+            return np.random.choice(win_action)
 
-        if win_action != None:
-            return win_action
-
-        if draw_action != None:
-            return draw_action
+        if draw_action:
+            return np.random.choice(draw_action)
 
         # check if the opponent of adversary is trying to win, we want to block such moves to prevent from losing
         prevent_opponent_win_moves = []
@@ -47,4 +45,8 @@ class NotSoSmartAdversary():
         
         return action
 
+    def get_action(self, state):
+        action = self._get_action(state)
+        assert state[action] == EMPTY_CELL
+        return action
 

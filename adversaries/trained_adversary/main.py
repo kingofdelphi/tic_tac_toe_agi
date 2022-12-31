@@ -1,17 +1,12 @@
-from common import EMPTY_CELL, GameState, opponent, EMPTY_CELL, resolve_game_state
+from common import EMPTY_CELL, Player
 import torch
 import numpy as np
+from adversaries.trained_adversary.pi import Pi
 
-class TrainedAdversaryV1():
-    def __init__(self, id, name='TrainedV1'):
-        self.id = id
-        self.name = name
-        from train import Pi
-        self.model = Pi(9,9)
-        self.model.load_state_dict(torch.load('./adversaries/trained_adversary/models/v1.pt'), strict=False)
-        self.model.eval()
-
+class Base():
     def get_action(self, state):
+        if self.id != Player.P1:
+            state = -state.copy()
         x = torch.from_numpy(state.astype(np.float32))
         pdparam = self.model(x)
 
@@ -23,5 +18,18 @@ class TrainedAdversaryV1():
                 choices.append(i)
                 vals.append(pdparam[i])
 
-        action = np.argmax(np.array(vals))
-        return choices[action]
+        vals = np.array(vals, dtype=np.float32)
+        action = np.random.choice(np.flatnonzero(vals == vals.max()))
+        action = choices[action]
+
+        assert state[action] == EMPTY_CELL
+
+        return action
+
+class TrainedAdversaryV1(Base):
+    def __init__(self, id, name='TrainedV1'):
+        self.id = id
+        self.name = name
+        self.model = Pi(9,9)
+        self.model.load_state_dict(torch.load('./adversaries/trained_adversary/models/v1.pt'))
+        self.model.eval()

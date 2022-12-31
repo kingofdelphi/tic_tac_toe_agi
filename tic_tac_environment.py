@@ -1,5 +1,8 @@
 from pydoc import resolve
+from adversaries.human import HumanAdversary
 from adversaries.not_so_smart_adversary import NotSoSmartAdversary
+from adversaries.trained_adversary.main import TrainedAdversaryV1
+from adversaries.trained_adversary.min_max import MinMaxAdversary
 from gym import Env
 from gym.spaces import Box, Discrete
 import numpy as np
@@ -16,10 +19,10 @@ class GameTag:
 
 # NEVER set zero scores as they're useless in the calculation, 0 signifies no information
 REWARD_MAP = {
-    GameTag.LOST_BY_INVALID_MOVE: -10,
-    GameTag.WON: 10,
-    GameTag.LOST: -5,
-    GameTag.DRAW: 5,
+    GameTag.LOST_BY_INVALID_MOVE: -1000,
+    GameTag.WON: 1000,
+    GameTag.LOST: -1000,
+    GameTag.DRAW: 0,
     GameTag.GAME_RUNNING: 0
 }
 
@@ -31,7 +34,10 @@ class TicTacEnv(Env):
         self.action_space = Discrete(9)
 
         self.me_player_id = Player.P1
-        self.adversary = NotSoSmartAdversary(Player.P2)
+        self.a1 = NotSoSmartAdversary(Player.P2)
+        self.a2 = MinMaxAdversary(Player.P2)
+
+        self.adversary = self.a1
         
         # current state 
         self.reset()
@@ -39,6 +45,13 @@ class TicTacEnv(Env):
     
     def reset(self):
         self.state = empty_board()
+        if np.random.rand() < 0.5:
+            self.adversary = self.a1
+        else:
+            self.adversary = self.a2
+        if np.random.rand() < 0.5:
+            # simulate opponent starts first randomly
+            self.state[np.random.randint(0, 9)] = self.adversary.id
         return self.state
 
 
@@ -82,5 +95,7 @@ class TicTacEnv(Env):
             
         reward = REWARD_MAP[game_status_tag]
         done = won or lost or draw
+        #print(self.state)
+        #input('...')
 
         return self.state, reward, done, game_status_tag
