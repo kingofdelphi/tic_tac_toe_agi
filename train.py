@@ -62,24 +62,25 @@ def main(episodes=10000,learning_rate=0.005):
             print(
                 'LAST 100 GAMES:',
                 'WINS',
-                last_100.count('W'),
+                str(last_100.count('W')).ljust(3),
                 'DRAW',
-                last_100.count('D'),
+                str(last_100.count('D')).ljust(3),
                 'LOST',
-                last_100.count('L'),
+                str(last_100.count('L')).ljust(3),
                 )
             print(
                 'LAST 500 GAMES:',
                 'WINS',
-                last_500.count('W'),
-                'DRAWS',
-                last_500.count('D'),
-                'LOSTS',
-                last_500.count('L'),
+                str(last_500.count('W')).ljust(3),
+                'DRAW',
+                str(last_500.count('D')).ljust(3),
+                'LOST',
+                str(last_500.count('L')).ljust(3),
                 )
+            print()
             print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
 if __name__ == '__main__':
-    model = main(episodes=200000, learning_rate=0.005)
+    model = main(episodes=1000000, learning_rate=0.005)
     torch.save(model.state_dict(), './adversaries/trained_adversary/models/v1.pt')

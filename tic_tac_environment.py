@@ -18,8 +18,8 @@ class GameTag:
 
 # NEVER set zero scores as they're useless in the calculation, 0 signifies no information
 REWARD_MAP = {
-    GameTag.WON: 1000,
-    GameTag.LOST: -1000,
+    GameTag.WON: 10,
+    GameTag.LOST: -10,
     GameTag.DRAW: 0,
     GameTag.GAME_RUNNING: 0
 }

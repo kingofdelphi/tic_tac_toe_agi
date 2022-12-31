@@ -25,8 +25,8 @@ def trained_ai_vs_human():
 def play():
     board = empty_board()
 
-    p1, p2 = trained_ai_vs_min_max()
-    #p1, p2 = trained_ai_vs_human()
+    # p1, p2 = trained_ai_vs_min_max()
+    p1, p2 = trained_ai_vs_human()
     #p1, p2 = min_max_vs_human()
 
     p1, p2 = p2, p1 #swap for starting player toggle
