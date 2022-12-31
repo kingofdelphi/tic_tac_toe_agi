@@ -56,29 +56,24 @@ def main(episodes=10000,learning_rate=0.005):
         if len(games) > 500:
             games = games[-500:]
         if episode % 1000 == 0:
-            last_500 = ''.join(games[-500:])
-            last_100 = ''.join(games[-100:])
-            print('\n',''.join(games[-100:]))
-            print(
-                'LAST 100 GAMES:',
-                'WINS',
-                str(last_100.count('W')).ljust(3),
-                'DRAW',
-                str(last_100.count('D')).ljust(3),
-                'LOST',
-                str(last_100.count('L')).ljust(3),
-                )
-            print(
-                'LAST 500 GAMES:',
-                'WINS',
-                str(last_500.count('W')).ljust(3),
-                'DRAW',
-                str(last_500.count('D')).ljust(3),
-                'LOST',
-                str(last_500.count('L')).ljust(3),
-                )
-            print()
-            print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
+            DRAW='='
+            WIN='+'
+            LOSE='-'
+            pretty = lambda x : ''.join({'W':WIN,'L':LOSE,'D':DRAW}[i] for i in x)
+            last_500 = pretty(''.join(games[-500:]))
+            last_100 = pretty(''.join(games[-100:]))
+            print('\n', last_100, '\n')
+            for batch in [last_100, last_500]:
+                print(
+                    f'LAST {len(batch)} GAMES:',
+                    'WINS',
+                    str(batch.count(WIN)).ljust(3),
+                    'DRAW',
+                    str(batch.count(DRAW)).ljust(3),
+                    'LOST',
+                    str(batch.count(LOSE)).ljust(3),
+                    )
+            print('\n', f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
 if __name__ == '__main__':
