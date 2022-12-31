@@ -23,14 +23,23 @@ class Pi(nn.Module):
         pdparam = self.model(x)
         return pdparam
 
-    def act(self, state):
+    def get_logits(self, state):
         x = torch.from_numpy(state.astype(np.float32))
-        
         pdparam = self.forward(x)
-        for i in range(9):
-            if state[i] != 0:
-                pdparam[i] = -1e29
-        pd = Categorical(logits=pdparam)
+
+        # logic to IGNORE invalid moves. Moves using occupied cells are forbidden
+        # invalid action masking to avoid sampling invalid actions
+        return pdparam.where(x == 0, torch.tensor(-1e18))
+
+    def best_action(self, state):
+        pdparam = torch.nn.functional.softmax(self.get_logits(state))
+
+        return np.random.choice(np.flatnonzero(pdparam == pdparam.max()))
+
+    def act(self, state):
+        logits = self.get_logits(state)
+
+        pd = Categorical(logits=logits)
         action = pd.sample()
         idx=action.item()
         log_prob = pd.log_prob(action)

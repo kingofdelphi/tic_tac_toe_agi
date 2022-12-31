@@ -24,7 +24,7 @@ def train(pi, optimizer):
     optimizer.step()
     return loss
 
-def main(episodes=100000):
+def main(episodes=10000,learning_rate=0.005):
     env = TicTacEnv()
 
     # in_dim is the state dimension
@@ -35,7 +35,7 @@ def main(episodes=100000):
     pi = Pi(in_dim, out_dim)
     pi.train()
     
-    optimizer = optim.Adam(pi.parameters(), lr=0.0001)
+    optimizer = optim.Adam(pi.parameters(), lr=learning_rate)
     games = [] # this will store how a game in the episode `epi` ended, win, lose, or draw
     # episodes=10
     for episode in range(episodes):
@@ -52,7 +52,8 @@ def main(episodes=100000):
         total_reward = sum(pi.rewards)
 
         pi.onpolicy_reset()
-
+        if len(games) > 500:
+            games = games[-500:]
         if episode % 1000 == 0:
             last_500 = ''.join(games[-500:])
             last_100 = ''.join(games[-100:])
@@ -64,8 +65,6 @@ def main(episodes=100000):
                 last_100.count('D'),
                 'LOST_100',
                 last_100.count('L'),
-                'INVAL_100',
-                last_100.count('-'),
                 )
             print(
                 'WIN_500',
@@ -74,12 +73,10 @@ def main(episodes=100000):
                 last_500.count('D'),
                 'LOST_500',
                 last_500.count('L'),
-                'INVAL_100',
-                last_500.count('-'),
                 )
             print(f'Episode {episode}, loss: {loss}, total reward: {total_reward}')
     return pi
 
 if __name__ == '__main__':
-    model = main()
+    model = main(episodes=50000, learning_rate=0.005)
     torch.save(model.state_dict(), './adversaries/trained_adversary/models/v1.pt')

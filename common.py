@@ -70,7 +70,10 @@ def pretty_print_board(board, turn):
     print('-----------')
     print(' {} | {} | {}'.format(*board[6:9]))
 
-def make_move(board, position, turn):
+def make_move(board, position, turn, assert_not_occupied=True):
+    if assert_not_occupied:
+        assert board[position] == EMPTY_CELL
+
     # copy the board
     result = np.copy(board)
     result[position] = turn
