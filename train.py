@@ -77,5 +77,5 @@ def main(episodes=10000,learning_rate=0.005):
     return pi
 
 if __name__ == '__main__':
-    model = main(episodes=100000, learning_rate=0.001)
+    model = main(episodes=1000000, learning_rate=0.001)
     torch.save(model.state_dict(), './adversaries/trained_adversary/models/v1.pt')

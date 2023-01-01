@@ -34,6 +34,10 @@ class TicTacEnv(Env):
         self.me_player_id = Player.P1
         self.a1 = NotSoSmartAdversary(Player.P2)
         self.a2 = MinMaxAdversary(Player.P2)
+        #self.a1 = TrainedAdversaryV1(Player.P2)
+        #self.a2 = TrainedAdversaryV1(Player.P2)
+        #self.a1.set_mode(False)
+        #self.a2.set_mode(False)
 
         self.adversary = self.a1
         

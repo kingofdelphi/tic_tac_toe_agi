@@ -17,8 +17,8 @@ def trained_ai_vs_min_max():
     return p1, p2
 
 def trained_ai_vs_human():
-    p1 = TrainedAdversaryV1(Player.P1, 'AIv1 I')
-    p2 = HumanAdversary(Player.P2, 'Human')
+    p1 = TrainedAdversaryV1(Player.P2, 'AIv1 I')
+    p2 = HumanAdversary(Player.P1, 'Human')
 
     return p1, p2
 
